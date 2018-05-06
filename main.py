@@ -49,7 +49,7 @@ def set_proxy(PROXIES):
 header()
 with open(RESULTS, 'r') as myfile:
 	text = myfile.read()
-info = [item for item in text.split('\n') if item != '']
+info = [item for item in text.split('\n') if item != '' and len([field for field in item.split(':') if item != '']) > 1]
 statuses = []
 if len(info) > 0:
 	print center('Gathering order status for {} orders...\n'.format(str(len(info))), ' ')
@@ -118,8 +118,20 @@ if len(info) > 0:
 	header()
 	print center('Output', '~')
 	print ''
-	for category in list(set(statuses)):
+	for category in sorted(list(set(statuses))):
 		print center('{}: {}'.format(category, str(sum(category == status for status in statuses))), ' ')
+	with open(RESULTS, 'r') as myfile:
+		text = myfile.read()
+	info = [item for item in text.split('\n') if item != '' and len([field for field in item.split(':') if item != '']) > 1]
+	sorted_text = ''
+	for category in sorted(list(set(statuses))):
+		sorted_text += category + '\n\n'
+		for item in info:
+			if item.split(':')[2] == category:
+				sorted_text += item + '\n'
+		sorted_text += '\n'
+	with open(RESULTS, 'w') as myfile:
+		myfile.write(sorted_text)
 	raw_input('\n' + WIDTH * '~' + '\n\n' + center('Output saved to {}'.format(RESULTS), ' ') + '\n\n' + center('Press enter to quit', ' '))
 else:
 	raw_input('\n' + center('Press enter to quit', ' '))
