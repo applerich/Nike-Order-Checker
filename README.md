@@ -13,4 +13,4 @@ Easier way to check multiple Nike.com orders.
 
 ### TODO
 
-- [ ] Idk yet, suggest some things on Twitter @DefNotAvg
+- [ ] Add tracking support if I can ever get an order that ships
