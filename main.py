@@ -45,7 +45,7 @@ def set_proxy(PROXIES):
 		  'https': None,
 		}
 	return proxies
-
+	
 header()
 with open(RESULTS, 'r') as myfile:
 	text = myfile.read()
@@ -100,6 +100,24 @@ for i in range(0,len(info)):
 		status = json.loads(response.content)['data']['order']['status']
 	except:
 		status = 'Error getting order status'
+	tracking_number = ''
+	expected_delivery = ''
+	if status == 'Shipped':
+		try:
+			status = json.loads(response.content)['data']['order']['shippingGroups'][0]['status']
+			if status != 'Delivered':
+				for item in json.loads(response.content)['data']['order']['shippingGroups']:
+					try:
+						tracking_number = item['trackingNumber']
+					except:
+						pass
+				for field in item['commerceItems']:
+					try:
+						expected_delivery = field['expectedDeliveryDate']
+					except:
+						pass
+		except:
+			tracking_number = 'Error getting tracking number'
 	statuses.append(status)
 	if len(order) > 2:
 		order[2] = status
@@ -107,6 +125,20 @@ for i in range(0,len(info)):
 	else:
 		order.append(status)
 		final = ':'.join(order[:3])
+	if tracking_number != '':
+		if len(order) > 3:
+			order[3] = tracking_number
+			final = ':'.join(order[:4])
+		else:
+			order.append(tracking_number)
+			final = ':'.join(order[:4])
+	if expected_delivery != '':
+		if len(order) > 4:
+			order[4] = expected_delivery
+			final = ':'.join(order[:5])
+		else:
+			order.append(expected_delivery)
+			final = ':'.join(order[:5])
 	with open(RESULTS, 'r') as myfile:
 		text = myfile.read()
 	with open(RESULTS, 'w') as myfile:
