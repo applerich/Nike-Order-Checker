@@ -7,6 +7,7 @@ from time import sleep
 RESULTS = 'orders.txt' # Text file where orders are located in email:ordernumber format
 DELAY = 0 # Delay in seconds between checking orders
 PROXY_FILE = 'proxies.txt' # Text file where proxies are located in ip:host or ip:host:user:pass format
+DISPLAY = False # Whether or not you want the full output saved to RESULTS to be displayed in terminal as well
 
 WIDTH = 30 # Don't touch
 
@@ -148,10 +149,6 @@ for i in range(0,len(info)):
 		smart_sleep(DELAY)
 if len(info) > 0:
 	header()
-	print center('Output', '~')
-	print ''
-	for category in sorted(list(set(statuses))):
-		print center('{}: {}'.format(category, str(sum(category == status for status in statuses))), ' ')
 	with open(RESULTS, 'r') as myfile:
 		text = myfile.read()
 	info = [item for item in text.split('\n') if item != '' and len([field for field in item.split(':') if item != '']) > 1]
@@ -164,6 +161,12 @@ if len(info) > 0:
 		sorted_text += '\n'
 	with open(RESULTS, 'w') as myfile:
 		myfile.write(sorted_text)
+	if DISPLAY:
+		print sorted_text
+	print center('Output', '~')
+	print ''
+	for category in sorted(list(set(statuses))):
+		print center('{}: {}'.format(category, str(sum(category == status for status in statuses))), ' ')
 	raw_input('\n' + WIDTH * '~' + '\n\n' + center('Output saved to {}'.format(RESULTS), ' ') + '\n\n' + center('Press enter to quit', ' '))
 else:
 	raw_input('\n' + center('Press enter to quit', ' '))
